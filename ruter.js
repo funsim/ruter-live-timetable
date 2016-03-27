@@ -101,4 +101,6 @@ function countdown() {
 $(document).ready(function(){
 loadTimes(stop_ids["Skøyen"]);
 //loadStops();
+
+setTimeout(function(){ window.location.reload(1);}, 60*1000);
 })
