@@ -18,3 +18,7 @@ td {
 .urgent {
     background-color: #FF3333;
 }
+
+.crop {
+    overflow: hidden;
+}
