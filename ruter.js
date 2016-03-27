@@ -60,16 +60,16 @@ function loadTimes(stopID)
             destination = val.MonitoredVehicleJourney.MonitoredCall.DestinationDisplay;
 
             items.push( "<tr id='" + key + "'>");
-            items.push( "<td>" + line + "</td>" );
+            items.push( "<td class=\"align_right\">" + line + "</td>" );
             items.push( "<td>" + destination + "</td>" );
-            items.push( "<td class=\"countdown\" value=\"" + waitingTimeSeconds + "\">" + waitingTime + "</td>" );
+            items.push( "<td class=\"countdown align_right\" value=\"" + waitingTimeSeconds + "\">" + waitingTime + "</td>" );
             items.push( "</tr>");
           });
 
           $( "<table/>", {
-            "class": "stops-table",
+            "class": "table",
             html: items.join( "" )
-          }).appendTo( "body" );
+          }).appendTo( "#departuretimes" );
 
           window.setInterval(countdown, 1000);
         });
@@ -78,9 +78,19 @@ function loadTimes(stopID)
 function countdown() {
     $('.countdown').each(function( index ) {
         newtime = Number($(this).attr("value")) - 1;
+
+        // Delete old departures
         if (newtime < -30) {
             var target = $(this).closest("tr");
             target.hide('slow', function(){ target.remove(); });
+        }
+
+        // Mark upcoming departures
+        if (newtime < 3*60) {
+            $(this).closest("tr").addClass("emphasize");
+        }
+        if (newtime < 1*60) {
+            $(this).closest("tr").removeClass("emphasize").addClass("urgent");
         }
 
         $(this).attr("value", newtime);

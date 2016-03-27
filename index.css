@@ -1,0 +1,20 @@
+table {
+    border-collapse: collapse;
+    border: 1px solid black;
+}
+
+td {
+    text-align: left;
+}
+
+.align_right {
+    text-align: right;
+}
+
+.emphasize {
+    background-color: #FF9999;
+}
+
+.urgent {
+    background-color: #FF3333;
+}
