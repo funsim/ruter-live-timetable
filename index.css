@@ -21,11 +21,11 @@ td {
 }
 
 .emphasize {
-    background-color: #006464;
+    background-color: rgb(205,255,255);
 }
 
 .urgent {
-    background-color: #00C8C8;
+    background-color: rgb(155,255,255);
 }
 
 .crop {
