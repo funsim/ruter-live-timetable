@@ -2,6 +2,14 @@ stop_ids = {"Skøyen": 3012501,
             "IT Fornebu": 2190018,
            };
 
+function secondsToHms(d) {
+    d = Number(d);
+    var h = Math.max(Math.floor(d / 3600), 0);
+    var m = Math.max(Math.floor(d % 3600 / 60), 0);
+    var s = Math.max(Math.floor(d % 3600 % 60), 0);
+    return ((h > 0 ? h + ":" + (m < 10 ? "0" : "") : "") + m + ":" + (s < 10 ? "0" : "") + s);
+}
+
 function loadJSONCrossOrigin(url, callback)
 {
     $.getJSON("http://query.yahooapis.com/v1/public/yql",
@@ -42,18 +50,19 @@ function loadTimes(stopID)
           function( data ) {
           var items = [];
           $.each( data, function( key, val ) {
+            if (key > 5) {
+                return true;
+            }
             departureTime = Date.parse(val.MonitoredVehicleJourney.MonitoredCall.ExpectedDepartureTime);
-            waitingTime = (departureTime - Date.now())/1000;
-            waitingMinutes = Math.floor( waitingTime/60 );
-            waitingSeconds = Math.round( waitingTime - waitingMinutes*60 );
+            waitingTimeSeconds = (departureTime - Date.now())/1000;
+            waitingTime = secondsToHms(waitingTimeSeconds);
             line = val.MonitoredVehicleJourney.PublishedLineName;
             destination = val.MonitoredVehicleJourney.MonitoredCall.DestinationDisplay;
 
             items.push( "<tr id='" + key + "'>");
             items.push( "<td>" + line + "</td>" );
             items.push( "<td>" + destination + "</td>" );
-            //items.push( "<td>" + departureTime + "</td>" );
-            items.push( "<td>" + waitingMinutes +":" + waitingSeconds + "</td>" );
+            items.push( "<td class=\"countdown\" value=\"" + waitingTimeSeconds + "\">" + waitingTime + "</td>" );
             items.push( "</tr>");
           });
 
@@ -61,7 +70,22 @@ function loadTimes(stopID)
             "class": "stops-table",
             html: items.join( "" )
           }).appendTo( "body" );
+
+          window.setInterval(countdown, 1000);
         });
+}
+
+function countdown() {
+    $('.countdown').each(function( index ) {
+        newtime = Number($(this).attr("value")) - 1;
+        if (newtime < -30) {
+            var target = $(this).closest("tr");
+            target.hide('slow', function(){ target.remove(); });
+        }
+
+        $(this).attr("value", newtime);
+        $(this).html(secondsToHms(newtime));
+    });
 }
 
 $(document).ready(function(){
